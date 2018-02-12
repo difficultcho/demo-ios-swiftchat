@@ -21,21 +21,21 @@ class LoginViewController: UIViewController {
         auth = WDGAuth.auth()
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         title = "Wild Chat"
     }
 
-    @IBAction func login(sender: AnyObject) {
+    @IBAction func login(_ sender: AnyObject) {
 
-        auth?.signInAnonymouslyWithCompletion(){(user, error) in
+        auth?.signInAnonymously(){(user, error) in
             if error != nil{
                 //There was an error authenticating
             }else{
                 NSLog("uid : %@", (user?.uid)!)
                 let messagesVc = MessagesViewController()
                 messagesVc.user = user
-                let sub = user?.uid[(user?.uid.startIndex.advancedBy(10))!..<(user?.uid.endIndex)!]
+                let sub = user?.uid[(user?.uid.startIndex.advanced(by: 10))!..<(user?.uid.endIndex)!]
                 messagesVc.sender = sub
                 messagesVc.ref = self.ref
                 messagesVc.auth = self.auth
