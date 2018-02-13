@@ -9,7 +9,7 @@
 import Foundation
 
 class Message: NSObject, JSQMessageData  {
-
+    
     var text_: String
     var sender_: String
     var date_: Date
@@ -35,7 +35,7 @@ class Message: NSObject, JSQMessageData  {
     }
     
     func date() -> Date! {
-        return date_;
+        return date_ as Date;
     }
     
     func imageUrl() -> String? {

@@ -32,16 +32,15 @@ class MessagesViewController: JSQMessagesViewController {
         messagesRef = WDGSync.sync().reference().child("messages")
         
         // *** STEP 4: RECEIVE MESSAGES FROM WILDDOG
-        messagesRef.observe(WDGDataEventType.childAdded, with: { (snapshot) in
-            let tmp = snapshot.value! as AnyObject
-            let text = tmp["text"] as? String
-            let sender = tmp["sender"] as? String
-            let imageUrl = tmp["imageUrl"] as? String
-            
+        messagesRef.observe(WDGDataEventType.childAdded) { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            let text = value!["text"] as? String
+            let sender = value!["sender"] as? String
+            let imageUrl = value!["imageUrl"] as? String
             let message = Message(text: text, sender: sender, imageUrl: imageUrl)
             self.messages.append(message)
             self.finishReceivingMessage()
-        })
+        }
     }
     
     func sendMessage(_ text: String!, sender: String!) {
@@ -60,9 +59,9 @@ class MessagesViewController: JSQMessagesViewController {
     
     func setupAvatarImage(_ name: String, imageUrl: String?, incoming: Bool) {
         if let stringUrl = imageUrl {
-            if let url = URL(string: stringUrl) {
-                if let data = try? Data(contentsOf: url) {
-                    let image = UIImage(data: data)
+            if let url = NSURL(string: stringUrl) {
+                if let data = NSData.init(contentsOf: url as URL) {
+                    let image = UIImage(data: data as Data)
                     let diameter = incoming ? UInt(collectionView!.collectionViewLayout.incomingAvatarViewSize.width) : UInt(collectionView!.collectionViewLayout.outgoingAvatarViewSize.width)
                     let avatarImage = JSQMessagesAvatarFactory.avatar(with: image, diameter: diameter)
                     avatars[name] = avatarImage
@@ -72,7 +71,7 @@ class MessagesViewController: JSQMessagesViewController {
         }
         
         // At some point, we failed at getting the image (probably broken URL), so default to avatarColor
-        setupAvatarColor(name, incoming: incoming)
+        setupAvatarColor(name: name, incoming: incoming)
     }
     
     func setupAvatarColor(_ name: String, incoming: Bool) {
@@ -84,7 +83,7 @@ class MessagesViewController: JSQMessagesViewController {
         let b = CGFloat(Float(rgbValue & 0xFF)/255.0)
         let color = UIColor(red: r, green: g, blue: b, alpha: 0.5)
         
-        let nameLength = name.characters.count
+        let nameLength = name.count
         let initials : String? = name.substring(to: sender.index(sender.startIndex, offsetBy: min(3, nameLength)))
         let userImage = JSQMessagesAvatarFactory.avatar(withUserInitials: initials, backgroundColor: color, textColor: UIColor.black, font: UIFont.systemFont(ofSize: CGFloat(13)), diameter: diameter)
         
@@ -99,14 +98,15 @@ class MessagesViewController: JSQMessagesViewController {
         
         sender = (sender != nil) ? sender : "Anonymous"
         var profileImageUrl : String!
-        if user!.providerData.count as Int > 0 {
-            profileImageUrl = try! NSString(contentsOf: (user?.providerData[0].photoURL)!, encoding: 0) as String
+        if user!.providerData.count > 0 {
+            profileImageUrl = try! NSString.init(contentsOf: (user?.providerData[0].photoURL)!, encoding: 0) as String
+            
         }
         if let urlString = profileImageUrl {
-            setupAvatarImage(sender, imageUrl: urlString as String, incoming: false)
+            setupAvatarImage(name: sender, imageUrl: urlString as String, incoming: false)
             senderImageUrl = urlString as String
         } else {
-            setupAvatarColor(sender, incoming: false)
+            setupAvatarColor(name: sender, incoming: false)
             senderImageUrl = ""
         }
         
@@ -131,21 +131,18 @@ class MessagesViewController: JSQMessagesViewController {
     func receivedMessagePressed(_ sender: UIBarButtonItem) {
         // Simulate reciving message
         showTypingIndicator = !showTypingIndicator
-        scrollToBottom(animated: true)
+        scrollToBottom(animated: true);
     }
     
     override func didPressSend(_ button: UIButton!, withMessageText text: String!, sender: String!, date: Date!) {
         JSQSystemSoundPlayer.jsq_playMessageSentSound()
-        
-        sendMessage(text, sender: sender)
-        
+        sendMessage(text: text, sender: sender);
         finishSendingMessage()
     }
     
     override func didPressAccessoryButton(_ sender: UIButton!) {
         print("Camera pressed!")
     }
-    
     override func collectionView(_ collectionView: JSQMessagesCollectionView!, messageDataForItemAt indexPath: IndexPath!) -> JSQMessageData! {
         return messages[indexPath.item]
     }
@@ -154,10 +151,9 @@ class MessagesViewController: JSQMessagesViewController {
         let message = messages[indexPath.item]
         
         if message.sender() == sender {
-            return UIImageView(image: outgoingBubbleImageView!.image, highlightedImage: outgoingBubbleImageView!.highlightedImage)
+            return UIImageView(image: outgoingBubbleImageView?.image, highlightedImage: outgoingBubbleImageView?.highlightedImage)
         }
-        
-        return UIImageView(image: incomingBubbleImageView!.image, highlightedImage: incomingBubbleImageView!.highlightedImage)
+        return UIImageView(image: incomingBubbleImageView?.image, highlightedImage: incomingBubbleImageView?.highlightedImage)
     }
     
     override func collectionView(_ collectionView: JSQMessagesCollectionView!, avatarImageViewForItemAt indexPath: IndexPath!) -> UIImageView! {
@@ -165,7 +161,7 @@ class MessagesViewController: JSQMessagesViewController {
         if let avatar = avatars[message.sender()] {
             return UIImageView(image: avatar)
         } else {
-            setupAvatarImage(message.sender(), imageUrl: message.imageUrl(), incoming: true)
+            setupAvatarImage(name: message.sender(), imageUrl: message.imageUrl(), incoming: true)
             return UIImageView(image:avatars[message.sender()])
         }
     }
@@ -183,10 +179,8 @@ class MessagesViewController: JSQMessagesViewController {
         } else {
             cell.textView!.textColor = UIColor.white
         }
-        
-//        let attributes : [NSObject:AnyObject] = [NSForegroundColorAttributeName:cell.textView.textColor, NSUnderlineStyleAttributeName: 1]
-//        cell.textView.linkTextAttributes = attributes
-
+        //        let attributes : [NSObject:AnyObject] = [NSForegroundColorAttributeName:cell.textView.textColor, NSUnderlineStyleAttributeName: 1]
+        //        cell.textView.linkTextAttributes = attributes
         return cell
     }
     
@@ -210,7 +204,6 @@ class MessagesViewController: JSQMessagesViewController {
         
         return NSAttributedString(string:message.sender())
     }
-    
     override func collectionView(_ collectionView: JSQMessagesCollectionView!, layout collectionViewLayout: JSQMessagesCollectionViewFlowLayout!, heightForMessageBubbleTopLabelAt indexPath: IndexPath!) -> CGFloat {
         let message = messages[indexPath.item]
         
@@ -229,4 +222,5 @@ class MessagesViewController: JSQMessagesViewController {
         
         return kJSQMessagesCollectionViewCellLabelHeightDefault
     }
+
 }
