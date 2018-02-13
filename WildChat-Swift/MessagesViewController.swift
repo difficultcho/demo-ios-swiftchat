@@ -71,7 +71,7 @@ class MessagesViewController: JSQMessagesViewController {
         }
         
         // At some point, we failed at getting the image (probably broken URL), so default to avatarColor
-        setupAvatarColor(name: name, incoming: incoming)
+        setupAvatarColor(name, incoming: incoming)
     }
     
     func setupAvatarColor(_ name: String, incoming: Bool) {
@@ -103,10 +103,10 @@ class MessagesViewController: JSQMessagesViewController {
             
         }
         if let urlString = profileImageUrl {
-            setupAvatarImage(name: sender, imageUrl: urlString as String, incoming: false)
+            setupAvatarImage(sender, imageUrl: urlString as String, incoming: false)
             senderImageUrl = urlString as String
         } else {
-            setupAvatarColor(name: sender, incoming: false)
+            setupAvatarColor(sender, incoming: false)
             senderImageUrl = ""
         }
         
@@ -136,7 +136,7 @@ class MessagesViewController: JSQMessagesViewController {
     
     override func didPressSend(_ button: UIButton!, withMessageText text: String!, sender: String!, date: Date!) {
         JSQSystemSoundPlayer.jsq_playMessageSentSound()
-        sendMessage(text: text, sender: sender);
+        sendMessage(text, sender: sender);
         finishSendingMessage()
     }
     
@@ -161,7 +161,7 @@ class MessagesViewController: JSQMessagesViewController {
         if let avatar = avatars[message.sender()] {
             return UIImageView(image: avatar)
         } else {
-            setupAvatarImage(name: message.sender(), imageUrl: message.imageUrl(), incoming: true)
+            setupAvatarImage(message.sender(), imageUrl: message.imageUrl(), incoming: true)
             return UIImageView(image:avatars[message.sender()])
         }
     }

@@ -31,6 +31,7 @@ class LoginViewController: UIViewController {
         auth?.signInAnonymously(completion: { (user, error) in
             if error != nil {
                 //There was an error authenticating
+                NSLog(error.debugDescription)
             } else {
                 NSLog("uid : %@", (user?.uid)!)
                 let messagesVc = MessagesViewController()

@@ -41,7 +41,7 @@
                                 <rect key="frame" x="121" y="319" width="134" height="30"/>
                                 <state key="normal" title="Login Anonymously"/>
                                 <connections>
-                                    <action selector="loginWithSender:" destination="HCx-rb-8C7" eventType="touchUpInside" id="a5y-8L-CmU"/>
+                                    <action selector="login:" destination="HCx-rb-8C7" eventType="touchUpInside" id="syJ-Ig-2jE"/>
                                 </connections>
                             </button>
                         </subviews>
