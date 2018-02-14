@@ -245,12 +245,12 @@
 		3904302F1BCBA73600B97C64 = {
 			isa = PBXGroup;
 			children = (
-				390430711BCBB7EA00B97C64 /* Frameworks */,
 				3904303A1BCBA73600B97C64 /* WildChat-Swift */,
 				390430511BCBA73600B97C64 /* WildChat-SwiftTests */,
 				3904305C1BCBA73600B97C64 /* WildChat-SwiftUITests */,
 				390430391BCBA73600B97C64 /* Products */,
 				54A9A1CC9DA7CF1EDBB73D87 /* Pods */,
+				390430711BCBB7EA00B97C64 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -664,9 +664,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-WildChat-Swift/Pods-WildChat-Swift-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/MessageKit/MessageKit.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/MessageKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -703,7 +706,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
